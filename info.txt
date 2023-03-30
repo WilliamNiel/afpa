@@ -1,0 +1,7 @@
+créez la bdd :
+nom : afpa
+type : utf8_general_ci
+
+
+mettre dans le .env :
+DB_DATABASE=afpa
