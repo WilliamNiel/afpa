@@ -14,10 +14,14 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('admin/articles', [ArticleController::class, 'indexAdmin'])->name('articles.admin.index');
+Route::resource('admin/articles', ArticleController::class)->except(['index']);
 
 Route::resources([
-    'articles' => App\Http\Controllers\ArticleController::class,
+    'articles' => ArticleController::class,
 ]);
+
+
 
 Route::get('/', function () {
     return view('welcome');

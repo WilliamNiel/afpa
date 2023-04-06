@@ -21,9 +21,10 @@ return new class extends Migration
             $table->date('date_debut');
             $table->date('date_fin');
             $table->string('sujet');
-            $table->string('image');
+            $table->string('image')->nullable();
             $table->text('contenu');
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreignIdFor(Visibilite::class);
             $table->foreignIdFor(Etat::class);

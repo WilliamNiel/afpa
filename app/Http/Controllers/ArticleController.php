@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Article;
+use App\Models\Visibilite;
+use App\Models\Etat;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 
@@ -15,18 +17,26 @@ class ArticleController extends Controller
      */
     public function index(Article $article)
     {
-        $articles = $article->articles();
-        return $articles;
+        $articles = Article::all();
+        return view('welcome',compact('articles'));
     }
 
-    /**
+    public function indexAdmin(Article $article)
+    {
+        $articles = Article::all();
+        return view('articles.indexAdmin',compact('articles'));
+    }
+
+    /**s
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function create()
     {
-        //
+        $visibilites = Visibilite::all();
+        $etats = Etat::all();
+        return view('articles.formArticle', compact('visibilites', 'etats'));
     }
 
     /**
@@ -37,7 +47,32 @@ class ArticleController extends Controller
      */
     public function store(StoreArticleRequest $request)
     {
-        //
+        $visibilite_id = $request->input('visibilite_id');
+        $etat_id = $request->input('etat_id');
+    
+        $request->validate([
+            'titre' => 'required|max:255',
+            'date_debut' => 'required|date',
+            'date_fin' => 'required|date|after:date_debut',
+            'sujet' => 'required',
+            'contenu' => 'required'
+        ]);
+
+        $image = $request->file('image');
+        $imageName = $image->getClientOriginalName();
+        $image->move(public_path('images'), $imageName);
+
+       Article::create([
+            'titre' => $request->titre,
+            'date_debut' => $request->date_debut,
+            'date_fin' => $request->date_fin,
+            'sujet' => $request->sujet,
+            'image' => $request->image,
+            'contenu' => $request->contenu,
+            'visibilite_id' => $visibilite_id,
+            'etat_id' => $etat_id
+        ]);
+        return redirect()->route('articles.admin.index');
     }
 
     /**
@@ -49,7 +84,7 @@ class ArticleController extends Controller
     public function show($id)
     {
         
-        $article = (new Article)->article($id);
+        $article = Article::findOrFail($id);
         return $article;
     }
 
@@ -59,9 +94,12 @@ class ArticleController extends Controller
      * @param  \App\Models\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function edit(Article $article)
+    public function edit($id)
     {
-        //
+        $visibilites = Visibilite::all();
+        $etats = Etat::all();
+        $article = Article::findOrFail($id);
+        return view('articles.formArticle', compact('article', 'visibilites', 'etats'));
     }
 
     /**
@@ -71,9 +109,18 @@ class ArticleController extends Controller
      * @param  \App\Models\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateArticleRequest $request, Article $article)
+    public function update(UpdateArticleRequest $request, $id)
     {
-        //
+        $article = Article::findOrFail($id);
+        $article->titre = $request->titre;
+        $article->date_debut = $request->date_debut;
+        $article->date_fin = $request->date_fin;
+        $article->sujet = $request->sujet;
+        $article->image = $request->image;
+        $article->contenu = $request->contenu;
+        $article->save();
+    
+        return redirect()->route('articles.admin.index');
     }
 
     /**
@@ -82,8 +129,11 @@ class ArticleController extends Controller
      * @param  \App\Models\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Article $article)
+    public function destroy($id)
     {
-        //
+        $article = Article::findOrFail($id);
+        $article->delete();
+
+        return redirect()->route('articles.admin.index');
     }
 }

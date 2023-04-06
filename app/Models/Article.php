@@ -6,21 +6,12 @@ use App\Models\Etat;
 use App\Models\Visibilite;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Article extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     protected $guarded = [];
-
-
-    public function articles(){
-        return $this->all();
-    }
-
-    public function article($id)
-    {
-        return $this->findOrFail($id);
-    }
 
     public function visibilite()
     {
