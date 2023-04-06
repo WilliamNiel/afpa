@@ -59,15 +59,14 @@ class ArticleController extends Controller
         ]);
 
         $image = $request->file('image');
-        $imageName = $image->getClientOriginalName();
-        $image->move(public_path('images'), $imageName);
+        $path = $image->store('public/images');
 
        Article::create([
             'titre' => $request->titre,
             'date_debut' => $request->date_debut,
             'date_fin' => $request->date_fin,
             'sujet' => $request->sujet,
-            'image' => $request->image,
+            'image' => $path,
             'contenu' => $request->contenu,
             'visibilite_id' => $visibilite_id,
             'etat_id' => $etat_id

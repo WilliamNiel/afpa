@@ -68,7 +68,8 @@
             <p><label>UPLOAD IMAGE</label>
                 <input type="file" name="image"></input>
                 @if(isset($article->image))
-                <img src="{{ asset('storage/' . $article->image) }}" alt="Ma super image">
+                {{$article->image}}
+                <img src="{{ Storage::url($article->image) }}" alt="Mon image">
                 @endif
             </p>
 
