@@ -1,0 +1,28 @@
+.calendar {
+    font-family: Arial, sans-serif;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+  
+  .month {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
+  .weekdays {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-gap: 10px;
+  }
+  
+  .day {
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 10px;
+  }

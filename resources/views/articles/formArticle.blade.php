@@ -5,26 +5,27 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Document</title>
 </head>
 
 <body>
     <div>
-    
-    @if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
+
+        @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
                 <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
+                @endforeach
+            </ul>
+        </div>
+        @endif
 
         <form action="{{ isset($article) ? route('articles.update', ['article' => $article->id]) : route('articles.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             @if(isset($article))
-                @method('PUT') 
+            @method('PUT')
             @endif
             <input type="hidden" name="article_id" value="{{ isset($article->id) ? $article->id : '' }}">
             <p><label>TITRE</label>
@@ -61,14 +62,13 @@
 
 
 
-                <label>CONTENUE</label><br>
-                <textarea class="ckeditor form-control" id="contenu" name="contenu">{{ isset($article->contenu) ? $article->contenu : '' }}</textarea>
+            <label>CONTENUE</label><br>
+            <textarea class="ckeditor form-control" id="contenu" name="contenu">{{ isset($article->contenu) ? $article->contenu : '' }}</textarea>
 
 
             <p><label>UPLOAD IMAGE</label>
                 <input type="file" name="image"></input>
                 @if(isset($article->image))
-                {{$article->image}}
                 <img src="{{ Storage::url($article->image) }}" alt="Mon image">
                 @endif
             </p>
@@ -81,8 +81,23 @@
 </body>
 <script src="//cdn.ckeditor.com/4.14.1/standard/ckeditor.js"></script>
 <script type="text/javascript">
-    $(document).ready(function () {
-        $('.ckeditor').ckeditor();
+    $(document).ready(function() {
+        CKEDITOR.config.autoParagraph = false;
+        CKEDITOR.config.entities = false;
+        CKEDITOR.config.entities_latin = false;
+        CKEDITOR.config.entities_greek = false;
+        CKEDITOR.config.entities_processNumerical = false;
+        CKEDITOR.config.forceSimpleAmpersand = true;
+        CKEDITOR.config.htmlEncodeOutput = false;
+        CKEDITOR.config.entities_additional = '';
+        $('textarea.ckeditor').each(function() {
+            CKEDITOR.replace($(this).attr('name'), {
+                enterMode: CKEDITOR.ENTER_BR,
+                allowedContent: true,
+                entities: false
+            });
+        });
     });
 </script>
+
 </html>

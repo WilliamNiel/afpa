@@ -6,6 +6,6 @@
     <livewire:calendar />
     @livewireScripts
     @stack('scripts')
+
 </body>
 </html>
-
