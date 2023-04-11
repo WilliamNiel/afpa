@@ -16,15 +16,15 @@ class ArticleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Article $article)
+    public function index()
     {
-        $articles = Article::all();
-        return view('articles.testagendaperso', compact('articles'));
+        $articles = Article::where('etat_id', 2)->get();
+        return view('articles.agenda', compact('articles'));
     }
 
-    public function indexAdmin(Article $article)
+    public function indexAdmin()
     {
-        $articles = Article::all();
+        $articles = Article::paginate(8);
         return view('articles.indexAdmin', compact('articles'));
     }
 
@@ -56,7 +56,7 @@ class ArticleController extends Controller
         $etat_id = $request->input('etat_id');
 
         $request->validate([
-            'titre' => 'required|max:255',
+            'titre' => 'required|max:50',
             'date_debut' => 'required|date',
             'date_fin' => 'required|date|after:date_debut',
             'sujet' => 'required',
@@ -113,22 +113,37 @@ class ArticleController extends Controller
      * @param  \App\Models\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateArticleRequest $request, $id)
+    public function update(StoreArticleRequest $request, Article $article)
     {
-        $article = Article::findOrFail($id);
+        $date_debut = Carbon::parse($request->date_debut)->format('Y-m-d');
+        $date_fin = Carbon::parse($request->date_fin)->format('Y-m-d');
+        $visibilite_id = $request->input('visibilite_id');
+        $etat_id = $request->input('etat_id');
+    
+        $request->validate([
+            'titre' => 'required|max:50',
+            'date_debut' => 'required|date',
+            'date_fin' => 'required|date|after:date_debut',
+            'sujet' => 'required',
+            'contenu' => 'required'
+        ]);
+    
         $article->titre = $request->titre;
-        $article->date_debut = $request->date_debut;
-        $article->date_fin = $request->date_fin;
+        $article->date_debut = $date_debut;
+        $article->date_fin = $date_fin;
         $article->sujet = $request->sujet;
         $article->contenu = strip_tags($request->contenu);
-
+        $article->visibilite_id = $visibilite_id;
+        $article->etat_id = $etat_id;
+    
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('public/images');
+            $image = $request->file('image');
+            $path = $image->store('public/images');
             $article->image = $path;
         }
-
+    
         $article->save();
-
+    
         return redirect()->route('articles.admin.index');
     }
 

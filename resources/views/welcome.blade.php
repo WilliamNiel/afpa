@@ -21,6 +21,7 @@
         </style>
     </head>
     <body class="antialiased">
-welcome ta mèrerehgjiroepgkjn
+        <a href="{{ route('articles.index')}}">Agenda</a> <br>
+        <a href="{{ route('articles.admin.index') }}">Agenda ADMIN</a>
     </body>
 </html>

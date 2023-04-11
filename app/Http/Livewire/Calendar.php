@@ -13,7 +13,7 @@ class Calendar extends Component
 
     public function getEvents()
     {
-        $articles = Article::all();
+        $articles = Article::where('etat_id', 2)->get();
 
         $this->articles = $articles->map(function ($article) {
             return [
