@@ -18,13 +18,13 @@ class NewsController extends Controller
      */
     public function index()
     {
-        $news = News::where('etat_id', 2)->get();
+        $news = News::where('etat_id', 2)->paginate(5);
         return view('news.index', compact('news'));
     }
 
     public function indexAdmin()
     {
-        $news = News::paginate(8);
+        $news = News::paginate(6);
         return view('news.indexAdmin', compact('news'));
     }
 
@@ -48,8 +48,6 @@ class NewsController extends Controller
      */
     public function store(StoreNewsRequest $request)
     {
-
-
         $date_debut = Carbon::parse($request->date_debut)->format('Y-m-d');
         $date_fin = Carbon::parse($request->date_fin)->format('Y-m-d');
         $visibilite_id = $request->input('visibilite_id');
@@ -58,13 +56,17 @@ class NewsController extends Controller
         $request->validate([
             'titre' => 'required|max:50',
             'date_debut' => 'required|date',
-            'date_fin' => 'required|date|after:date_debut',
+            'date_fin' => 'required|date|after_or_equal:date_debut',
             'sujet' => 'required',
             'contenu' => 'required'
         ]);
 
-        $image = $request->file('image');
-        $path = $image->store('public/images');
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $path = $image->store('public/images');
+        } else {
+            $path = 'public/images/defaultNews.png';
+        }
 
         News::create([
             'titre' => $request->titre,
@@ -123,7 +125,7 @@ class NewsController extends Controller
         $request->validate([
             'titre' => 'required|max:50',
             'date_debut' => 'required|date',
-            'date_fin' => 'required|date|after:date_debut',
+            'date_fin' => 'required|date|after_or_equal:date_debut',
             'sujet' => 'required',
             'contenu' => 'required'
         ]);
@@ -135,13 +137,16 @@ class NewsController extends Controller
         $new->contenu = strip_tags($request->contenu);
         $new->visibilite_id = $visibilite_id;
         $new->etat_id = $etat_id;
-    
+        
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $path = $image->store('public/images');
             $new->image = $path;
+        } else {
+            $path = 'public/images/defaultNews.png';
+            $new->image = $path;
         }
-    
+
         $new->save();
     
         return redirect()->route('news.admin.index');

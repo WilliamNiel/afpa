@@ -22,10 +22,10 @@
         </div>
         @endif
 
-        <form action="{{ isset($new) ? route('news.update', ['new' => $new->id]) : route('news.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{route('news.update', ['news' => $new->id])}}" method="POST" enctype="multipart/form-data">
             @csrf
             @if(isset($new))
-            @method('PUT')
+            @method('PATCH')
             @endif
             <input type="hidden" name="new_id" value="{{ isset($new->id) ? $new->id : '' }}">
             <p><label>TITRE</label>

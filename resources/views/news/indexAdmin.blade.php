@@ -9,7 +9,8 @@
   <title>Document</title>
 </head>
 
-<body style="background-color: #19647E;">
+<body style="background-color: #CF0043;">
+<div class="backlink"><a href="{{ route('index')}}"  class="absolute text-red-500 no-underline z-50">Index</a></div>
   <div class="flex items-center justify-center flex-col h-screen gap-10">
     <div style="background-color: snow;" class="flex items-center justify-center gap-10 h-1/5 flex-col w-4/5 rounded-md text-3xl">
       <h2>Administration News</h2>

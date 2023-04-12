@@ -48,35 +48,37 @@ class ArticleController extends Controller
      */
     public function store(StoreArticleRequest $request)
     {
+            $date_debut = Carbon::parse($request->date_debut)->format('Y-m-d');
+            $date_fin = Carbon::parse($request->date_fin)->format('Y-m-d');
+            $visibilite_id = $request->input('visibilite_id');
+            $etat_id = $request->input('etat_id');
 
+            $request->validate([
+                'titre' => 'required|max:50',
+                'date_debut' => 'required|date',
+                'date_fin' => 'required|date|after_or_equal:date_debut',
+                'sujet' => 'required',
+                'contenu' => 'required'
+            ]);
 
-        $date_debut = Carbon::parse($request->date_debut)->format('Y-m-d');
-        $date_fin = Carbon::parse($request->date_fin)->format('Y-m-d');
-        $visibilite_id = $request->input('visibilite_id');
-        $etat_id = $request->input('etat_id');
-
-        $request->validate([
-            'titre' => 'required|max:50',
-            'date_debut' => 'required|date',
-            'date_fin' => 'required|date|after:date_debut',
-            'sujet' => 'required',
-            'contenu' => 'required'
-        ]);
-
-        $image = $request->file('image');
-        $path = $image->store('public/images');
-
-        Article::create([
-            'titre' => $request->titre,
-            'date_debut' => $date_debut,
-            'date_fin' => $date_fin,
-            'sujet' => $request->sujet,
-            'image' => $path,
-            'contenu' => strip_tags($request->contenu),
-            'visibilite_id' => $visibilite_id,
-            'etat_id' => $etat_id
-        ]);
-        return redirect()->route('articles.admin.index');
+            if ($request->hasFile('image')) {
+                $image = $request->file('image');
+                $path = $image->store('public/images');
+            } else {
+                $path = 'public/images/defaultArticle.png';
+            }
+            
+            Article::create([
+                'titre' => $request->titre,
+                'date_debut' => $date_debut,
+                'date_fin' => $date_fin,
+                'sujet' => $request->sujet,
+                'image' => $path,
+                'contenu' => strip_tags($request->contenu),
+                'visibilite_id' => $visibilite_id,
+                'etat_id' => $etat_id
+            ]);
+            return redirect()->route('articles.admin.index');
     }
 
     /**
@@ -119,15 +121,15 @@ class ArticleController extends Controller
         $date_fin = Carbon::parse($request->date_fin)->format('Y-m-d');
         $visibilite_id = $request->input('visibilite_id');
         $etat_id = $request->input('etat_id');
-    
+
         $request->validate([
             'titre' => 'required|max:50',
             'date_debut' => 'required|date',
-            'date_fin' => 'required|date|after:date_debut',
+            'date_fin' => 'required|date|after_or_equal:date_debut',
             'sujet' => 'required',
             'contenu' => 'required'
         ]);
-    
+
         $article->titre = $request->titre;
         $article->date_debut = $date_debut;
         $article->date_fin = $date_fin;
@@ -135,15 +137,17 @@ class ArticleController extends Controller
         $article->contenu = strip_tags($request->contenu);
         $article->visibilite_id = $visibilite_id;
         $article->etat_id = $etat_id;
-    
+
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $path = $image->store('public/images');
             $article->image = $path;
+        } else {
+            $path = 'public/images/defaultArticle.png';
         }
-    
+
         $article->save();
-    
+
         return redirect()->route('articles.admin.index');
     }
 
