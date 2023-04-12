@@ -72,7 +72,6 @@
                 },
                 events: JSON.parse('@json($articles)'),
                 eventClick: function(info) {
-                    console.log(info.event.etat_id)
                     window.location.href = "{{ route('articles.show', ['article' => ':id']) }}".replace(':id', info.event.id);
                 }
             });

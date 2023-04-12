@@ -22,6 +22,8 @@
     </head>
     <body class="antialiased">
         <a href="{{ route('articles.index')}}">Agenda</a> <br>
-        <a href="{{ route('articles.admin.index') }}">Agenda ADMIN</a>
+        <a href="{{ route('articles.admin.index') }}">Agenda ADMIN</a><br>
+        <a href="{{ route('news.index')}}">News</a> <br>
+        <a href="{{ route('news.admin.index') }}">News ADMIN</a>
     </body>
 </html>

@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Visibilite;
 use App\Models\Etat;
 use App\Models\Article;
+use App\Models\News;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,6 +26,12 @@ class DatabaseSeeder extends Seeder
             $article->visibilite()->associate($visibilites->random());
             $article->etat()->associate($etats->random());
             $article->save();
+        });
+
+        News::factory(10)->create()->each(function ($new) use ($visibilites, $etats) {
+            $new->visibilite()->associate($visibilites->random());
+            $new->etat()->associate($etats->random());
+            $new->save();
         });
     }
 }

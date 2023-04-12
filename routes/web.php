@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\NewsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,6 +21,15 @@ Route::resource('admin/articles', ArticleController::class)->except(['index']);
 Route::resources([
     'articles' => ArticleController::class,
 ]);
+
+Route::get('admin/news', [NewsController::class, 'indexAdmin'])->name('news.admin.index');
+Route::resource('admin/news', NewsController::class)->except(['index']);
+
+Route::resources([
+    'news' => NewsController::class,
+]);
+
+
 
 
 

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Article;
+use App\Models\News;
 use App\Models\Visibilite;
 use App\Models\Etat;
 use Carbon\Carbon;
-use App\Http\Requests\StoreArticleRequest;
-use App\Http\Requests\UpdateArticleRequest;
+use App\Http\Requests\StoreNewsRequest;
+use App\Http\Requests\UpdateNewsRequest;
 
-class ArticleController extends Controller
+class NewsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,14 +18,14 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        $articles = Article::where('etat_id', 2)->get();
-        return view('articles.agenda', compact('articles'));
+        $news = News::where('etat_id', 2)->get();
+        return view('news.index', compact('news'));
     }
 
     public function indexAdmin()
     {
-        $articles = Article::paginate(8);
-        return view('articles.indexAdmin', compact('articles'));
+        $news = News::paginate(8);
+        return view('news.indexAdmin', compact('news'));
     }
 
     /**s
@@ -37,16 +37,16 @@ class ArticleController extends Controller
     {
         $visibilites = Visibilite::all();
         $etats = Etat::all();
-        return view('articles.formArticle', compact('visibilites', 'etats'));
+        return view('news.formNews', compact('visibilites', 'etats'));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreArticleRequest  $request
+     * @param  \App\Http\Requests\StoreNewsRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreArticleRequest $request)
+    public function store(StoreNewsRequest $request)
     {
 
 
@@ -66,7 +66,7 @@ class ArticleController extends Controller
         $image = $request->file('image');
         $path = $image->store('public/images');
 
-        Article::create([
+        News::create([
             'titre' => $request->titre,
             'date_debut' => $date_debut,
             'date_fin' => $date_fin,
@@ -76,44 +76,44 @@ class ArticleController extends Controller
             'visibilite_id' => $visibilite_id,
             'etat_id' => $etat_id
         ]);
-        return redirect()->route('articles.admin.index');
+        return redirect()->route('news.admin.index');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Article  $article
+     * @param  \App\Models\News  $new
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
 
-        $article = Article::findOrFail($id);
-        return view('articles.article', compact('article'));
+        $new = News::findOrFail($id);
+        return view('news.new', compact('new'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Article  $article
+     * @param  \App\Models\News  $new
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
         $visibilites = Visibilite::all();
         $etats = Etat::all();
-        $article = Article::findOrFail($id);
-        return view('articles.formArticle', compact('article', 'visibilites', 'etats'));
+        $new = News::findOrFail($id);
+        return view('news.formNews', compact('new', 'visibilites', 'etats'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateArticleRequest  $request
-     * @param  \App\Models\Article  $article
+     * @param  \App\Http\Requests\UpdateNewsRequest  $request
+     * @param  \App\Models\News  $new
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreArticleRequest $request, Article $article)
+    public function update(StoreNewsRequest $request, News $new)
     {
         $date_debut = Carbon::parse($request->date_debut)->format('Y-m-d');
         $date_fin = Carbon::parse($request->date_fin)->format('Y-m-d');
@@ -128,36 +128,36 @@ class ArticleController extends Controller
             'contenu' => 'required'
         ]);
     
-        $article->titre = $request->titre;
-        $article->date_debut = $date_debut;
-        $article->date_fin = $date_fin;
-        $article->sujet = $request->sujet;
-        $article->contenu = strip_tags($request->contenu);
-        $article->visibilite_id = $visibilite_id;
-        $article->etat_id = $etat_id;
+        $new->titre = $request->titre;
+        $new->date_debut = $date_debut;
+        $new->date_fin = $date_fin;
+        $new->sujet = $request->sujet;
+        $new->contenu = strip_tags($request->contenu);
+        $new->visibilite_id = $visibilite_id;
+        $new->etat_id = $etat_id;
     
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $path = $image->store('public/images');
-            $article->image = $path;
+            $new->image = $path;
         }
     
-        $article->save();
+        $new->save();
     
-        return redirect()->route('articles.admin.index');
+        return redirect()->route('news.admin.index');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Article  $article
+     * @param  \App\Models\News  $new
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $article = Article::findOrFail($id);
-        $article->delete();
+        $new = News::findOrFail($id);
+        $new->delete();
 
-        return redirect()->route('articles.admin.index');
+        return redirect()->route('news.admin.index');
     }
 }
