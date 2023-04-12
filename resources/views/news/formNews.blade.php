@@ -21,11 +21,10 @@
             </ul>
         </div>
         @endif
-
-        <form action="{{route('news.update', ['news' => $new->id])}}" method="POST" enctype="multipart/form-data">
+        <form action="{{ isset($new) ? route('news.update', ['news' => $new->id]) : route('news.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             @if(isset($new))
-            @method('PATCH')
+            @method('PUT')
             @endif
             <input type="hidden" name="new_id" value="{{ isset($new->id) ? $new->id : '' }}">
             <p><label>TITRE</label>
@@ -74,7 +73,9 @@
             </p>
 
             <button type="submit">Valider</button>
-            <button>Annuler</button>
+        </form>
+        <form action="{{ route('news.admin.index') }}" >
+        <button>Annuler</button>
         </form>
     </div>
 

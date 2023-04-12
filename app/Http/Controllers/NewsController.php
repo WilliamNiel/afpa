@@ -115,43 +115,42 @@ class NewsController extends Controller
      * @param  \App\Models\News  $new
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreNewsRequest $request, News $new)
-    {
-        $date_debut = Carbon::parse($request->date_debut)->format('Y-m-d');
-        $date_fin = Carbon::parse($request->date_fin)->format('Y-m-d');
-        $visibilite_id = $request->input('visibilite_id');
-        $etat_id = $request->input('etat_id');
+    public function update(UpdateNewsRequest $request, $id)
+{
+    $news = News::findOrFail($id);
     
-        $request->validate([
-            'titre' => 'required|max:50',
-            'date_debut' => 'required|date',
-            'date_fin' => 'required|date|after_or_equal:date_debut',
-            'sujet' => 'required',
-            'contenu' => 'required'
-        ]);
+    $date_debut = Carbon::parse($request->date_debut)->format('Y-m-d');
+    $date_fin = Carbon::parse($request->date_fin)->format('Y-m-d');
+    $visibilite_id = $request->input('visibilite_id');
+    $etat_id = $request->input('etat_id');
     
-        $new->titre = $request->titre;
-        $new->date_debut = $date_debut;
-        $new->date_fin = $date_fin;
-        $new->sujet = $request->sujet;
-        $new->contenu = strip_tags($request->contenu);
-        $new->visibilite_id = $visibilite_id;
-        $new->etat_id = $etat_id;
-        
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $path = $image->store('public/images');
-            $new->image = $path;
-        } else {
-            $path = 'public/images/defaultNews.png';
-            $new->image = $path;
-        }
+    $request->validate([
+        'titre' => 'required|max:50',
+        'date_debut' => 'required|date',
+        'date_fin' => 'required|date|after_or_equal:date_debut',
+        'sujet' => 'required',
+        'contenu' => 'required'
+    ]);
 
-        $new->save();
-    
-        return redirect()->route('news.admin.index');
+    $path = $news->image;
+    if ($request->hasFile('image')) {
+        $image = $request->file('image');
+        $path = $image->store('public/images');
     }
 
+    $news->update([
+        'titre' => $request->titre,
+        'date_debut' => $date_debut,
+        'date_fin' => $date_fin,
+        'sujet' => $request->sujet,
+        'image' => $path,
+        'contenu' => strip_tags($request->contenu),
+        'visibilite_id' => $visibilite_id,
+        'etat_id' => $etat_id
+    ]);
+    
+    return redirect()->route('news.admin.index');
+}
     /**
      * Remove the specified resource from storage.
      *

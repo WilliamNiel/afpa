@@ -8,6 +8,7 @@ use App\Models\Etat;
 use Carbon\Carbon;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
+use Illuminate\Support\Facades\DB;
 
 class ArticleController extends Controller
 {
@@ -48,6 +49,8 @@ class ArticleController extends Controller
      */
     public function store(StoreArticleRequest $request)
     {
+        try{
+            DB::connection()->getPdo();
             $date_debut = Carbon::parse($request->date_debut)->format('Y-m-d');
             $date_fin = Carbon::parse($request->date_fin)->format('Y-m-d');
             $visibilite_id = $request->input('visibilite_id');
@@ -65,8 +68,9 @@ class ArticleController extends Controller
                 $image = $request->file('image');
                 $path = $image->store('public/images');
             } else {
-                $path = 'public/images/defaultArticle.png';
+                $path = 'public/images/defaultAgenda.png';
             }
+    
             
             Article::create([
                 'titre' => $request->titre,
@@ -79,6 +83,10 @@ class ArticleController extends Controller
                 'etat_id' => $etat_id
             ]);
             return redirect()->route('articles.admin.index');
+        }catch(\Exception $e){
+            return redirect()->route('articles.admin.index')
+            ->with("error", "Désolé, la base de donnée n'est pas disponible.");
+        }
     }
 
     /**
@@ -139,11 +147,8 @@ class ArticleController extends Controller
         $article->etat_id = $etat_id;
 
         if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $path = $image->store('public/images');
+            $path = $request->file('image')->store('public/images');
             $article->image = $path;
-        } else {
-            $path = 'public/images/defaultArticle.png';
         }
 
         $article->save();

@@ -74,7 +74,9 @@
             </p>
 
             <button type="submit">Valider</button>
-            <button>Annuler</button>
+        </form>
+        <form action="{{ route('articles.admin.index') }}" >
+        <button>Annuler</button>
         </form>
     </div>
 
